@@ -1,7 +1,10 @@
 package com.yourroom.controller;
 
 import com.yourroom.model.User;
+import com.yourroom.repository.UserRepository;
 import com.yourroom.service.UserService;
+import org.springframework.security.core.Authentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,7 +18,7 @@ import com.yourroom.dto.AuthResponse;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*") // Permite llamadas desde cualquier frontend (puedes limitarlo luego)
+@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired
@@ -26,6 +29,9 @@ public class UserController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     // Endpoint para registrar un nuevo usuario
@@ -53,10 +59,12 @@ public class UserController {
         return ResponseEntity.status(401).build(); // Unauthorized
     }
 
-
-    // Obtener todos los usuarios (pruebas, administración)
+    //Endpoint para obtener todos los usuarios.
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return ResponseEntity.ok(users);
     }
+
+
 }

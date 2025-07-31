@@ -23,7 +23,7 @@ public class UserProfile {
     private String location;
     private String gender;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String phone;
     private String email;

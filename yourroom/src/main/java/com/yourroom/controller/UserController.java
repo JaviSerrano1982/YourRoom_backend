@@ -46,7 +46,7 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
-    // Endpoint para obtener usuario por email (simula login básico)
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody User user) {
         Optional<User> existing = userService.getUserByEmail(user.getEmail());
@@ -54,10 +54,12 @@ public class UserController {
                 passwordEncoder.matches(user.getPassword(), existing.get().getPassword())) {
 
             String token = jwtUtil.generateToken(existing.get().getEmail());
-            return ResponseEntity.ok(new AuthResponse(token));
+            Long userId = existing.get().getId();
+            return ResponseEntity.ok(new AuthResponse(token, userId));
         }
         return ResponseEntity.status(401).build(); // Unauthorized
     }
+
 
     //Endpoint para obtener todos los usuarios.
     @GetMapping

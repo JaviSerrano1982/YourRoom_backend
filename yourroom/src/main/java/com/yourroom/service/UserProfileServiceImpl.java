@@ -49,6 +49,8 @@ public class UserProfileServiceImpl implements UserProfileService {
             return userProfileRepository.save(existing);
         } else {
             profile.setUser(user);
+            System.out.println("👤 Asignando user al perfil: " + user.getId());
+
             return userProfileRepository.save(profile);
         }
     }

@@ -34,4 +34,6 @@ build/
 
 # Evitar subir configuración sensible (clave secreta JWT)
 src/main/resources/application.properties
-vale genial
+
+/secrets/
+*.json

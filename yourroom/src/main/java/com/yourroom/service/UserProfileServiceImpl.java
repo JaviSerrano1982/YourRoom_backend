@@ -4,6 +4,7 @@ import com.yourroom.model.User;
 import com.yourroom.model.UserProfile;
 import com.yourroom.repository.UserProfileRepository;
 import com.yourroom.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,30 +29,30 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public UserProfile createOrUpdateProfile(UserProfile profile, Long userId) {
+    @Transactional
+    public UserProfile createOrUpdateProfile(UserProfile incoming, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con id: " + userId));
 
-        Optional<UserProfile> existingProfile = userProfileRepository.findByUser(user);
+        // Buscar SIEMPRE por userId (no por id del perfil)
+        UserProfile profile = userProfileRepository.findByUser_Id(userId)
+                .orElseGet(() -> {
+                    UserProfile p = new UserProfile();
+                    p.setUser(user); // vincular el usuario
+                    System.out.println("👤 Creando perfil vacío para userId: " + userId);
+                    return p;
+                });
 
-        if (existingProfile.isPresent()) {
-            UserProfile existing = existingProfile.get();
+        // Copiar campos (modo "reemplazo"; si quieres "patch", ver variante abajo)
+        profile.setFirstName(incoming.getFirstName());
+        profile.setLastName(incoming.getLastName());
+        profile.setLocation(incoming.getLocation());
+        profile.setGender(incoming.getGender());
+        profile.setBirthDate(incoming.getBirthDate());
+        profile.setPhone(incoming.getPhone());
+        profile.setEmail(incoming.getEmail());
+        profile.setPhotoUrl(incoming.getPhotoUrl());
 
-            existing.setFirstName(profile.getFirstName());
-            existing.setLastName(profile.getLastName());
-            existing.setLocation(profile.getLocation());
-            existing.setGender(profile.getGender());
-            existing.setBirthDate(profile.getBirthDate());
-            existing.setPhone(profile.getPhone());
-            existing.setEmail(profile.getEmail());
-            existing.setPhotoUrl(profile.getPhotoUrl());
-
-            return userProfileRepository.save(existing);
-        } else {
-            profile.setUser(user);
-            System.out.println("👤 Asignando user al perfil: " + user.getId());
-
-            return userProfileRepository.save(profile);
-        }
+        return userProfileRepository.save(profile);
     }
 }

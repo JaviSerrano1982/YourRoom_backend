@@ -6,25 +6,52 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// -----------------------------------------------------------------------------
+// USER PROFILE ENTITY
+// -----------------------------------------------------------------------------
+
+/**
+ * Entidad JPA que representa el perfil de usuario en la base de datos.
+ *
+ * Mapeo:
+ * - Tabla: user_profiles
+ * - Relación: OneToOne con User (cada usuario tiene un perfil único).
+ *
+ * Campos principales:
+ * - firstName, lastName: nombre y apellidos.
+ * - location: ubicación o ciudad.
+ * - gender: género.
+ * - birthDate: fecha de nacimiento (formato dd/MM/yyyy en JSON).
+ * - phone, email, photoUrl: información de contacto y foto de perfil.
+ * - createdAt, updatedAt: marcas de tiempo automáticas.
+ *
+ * Ciclo de vida:
+ * - @PrePersist → establece createdAt y updatedAt al crear.
+ * - @PreUpdate → actualiza updatedAt en cada modificación.
+ */
 @Entity
 @Table(name = "user_profiles")
 public class UserProfile {
 
+    // -------------------------------------------------------------------------
+    // ATRIBUTOS
+    // -------------------------------------------------------------------------
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Identificador único del perfil
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
-    private User user;
+    private User user; // Relación 1:1 con la entidad User
 
     private String firstName;
     private String lastName;
     private String location;
     private String gender;
 
-    @JsonFormat(pattern = "dd/MM/yyyy") //yyyy-MM-dd
+    @JsonFormat(pattern = "dd/MM/yyyy") // Formato de fecha en la serialización JSON
     private LocalDate birthDate;
+
     private String phone;
     private String email;
     private String photoUrl;
@@ -32,9 +59,9 @@ public class UserProfile {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-
-
+    // -------------------------------------------------------------------------
+    // EVENTOS DE ENTIDAD
+    // -------------------------------------------------------------------------
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -46,8 +73,9 @@ public class UserProfile {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getters y setters
-
+    // -------------------------------------------------------------------------
+    // GETTERS Y SETTERS
+    // -------------------------------------------------------------------------
     public Long getId() {
         return id;
     }

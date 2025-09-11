@@ -1,4 +1,4 @@
-package com.yourroom.dto;
+package com.yourroom.user.dto;
 
 import java.time.LocalDate;
 

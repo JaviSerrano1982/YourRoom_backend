@@ -1,12 +1,16 @@
-package com.yourroom.controller;
+package com.yourroom.user.controller;
 
 
-import com.yourroom.model.UserProfile;
-import com.yourroom.service.UserProfileService;
+import com.yourroom.user.dto.UserProfileResponse;
+import com.yourroom.user.model.UserProfile;
+import com.yourroom.user.repository.UserRepository;
+import com.yourroom.user.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
 
 
 // -----------------------------------------------------------------------------
@@ -32,6 +36,7 @@ public class UserProfileController {
     // DEPENDENCIAS
     // -------------------------------------------------------------------------
     private final UserProfileService userProfileService;
+    private final UserRepository userRepository;
 
     // -------------------------------------------------------------------------
     // CONSTRUCTOR
@@ -42,8 +47,9 @@ public class UserProfileController {
      * @param userProfileService servicio que gestiona la lógica de perfiles de usuario
      */
     @Autowired
-    public UserProfileController(UserProfileService userProfileService) {
+    public UserProfileController(UserProfileService userProfileService, UserRepository userRepository) {
         this.userProfileService = userProfileService;
+        this.userRepository = userRepository;
     }
 
     // -------------------------------------------------------------------------
@@ -84,4 +90,6 @@ public class UserProfileController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+
 }

@@ -1,6 +1,7 @@
-package com.yourroom.service;
+package com.yourroom.user.service;
 
-import com.yourroom.model.UserProfile;
+import com.yourroom.user.dto.UserProfileResponse;
+import com.yourroom.user.model.UserProfile;
 
 import java.util.Optional;
 
@@ -33,4 +34,6 @@ public interface UserProfileService {
     // CREAR O ACTUALIZAR PERFIL
     // -------------------------------------------------------------------------
     UserProfile createOrUpdateProfile(UserProfile profile, Long userId);
+
+
 }

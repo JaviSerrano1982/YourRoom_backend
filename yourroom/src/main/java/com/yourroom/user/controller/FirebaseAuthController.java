@@ -1,6 +1,6 @@
-package com.yourroom.controller;
+package com.yourroom.user.controller;
 
-import com.yourroom.service.FirebaseTokenService;
+import com.yourroom.user.service.FirebaseTokenService;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

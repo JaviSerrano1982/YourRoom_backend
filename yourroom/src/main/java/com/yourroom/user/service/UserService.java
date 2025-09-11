@@ -1,6 +1,6 @@
-package com.yourroom.service;
+package com.yourroom.user.service;
 
-import com.yourroom.model.User;
+import com.yourroom.user.model.User;
 
 import java.util.Optional;
 import java.util.List;

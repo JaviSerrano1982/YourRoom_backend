@@ -1,7 +1,7 @@
 package com.yourroom.config;
 
-import com.yourroom.model.User;
-import com.yourroom.repository.UserRepository;
+import com.yourroom.user.model.User;
+import com.yourroom.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.yourroom.model;
+package com.yourroom.user.model;
 
 import jakarta.persistence.*;
 

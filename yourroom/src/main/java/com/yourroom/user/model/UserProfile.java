@@ -1,4 +1,4 @@
-package com.yourroom.model;
+package com.yourroom.user.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

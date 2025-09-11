@@ -1,9 +1,8 @@
-package com.yourroom.controller;
+package com.yourroom.user.controller;
 
-import com.yourroom.model.User;
-import com.yourroom.repository.UserRepository;
-import com.yourroom.service.UserService;
-import org.springframework.security.core.Authentication;
+import com.yourroom.user.model.User;
+import com.yourroom.user.repository.UserRepository;
+import com.yourroom.user.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.yourroom.util.JwtUtil;
-import com.yourroom.dto.AuthResponse;
+import com.yourroom.user.dto.AuthResponse;
 
 // -----------------------------------------------------------------------------
 // USER CONTROLLER

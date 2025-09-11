@@ -1,6 +1,6 @@
-package com.yourroom.repository;
+package com.yourroom.user.repository;
 
-import com.yourroom.model.User;
+import com.yourroom.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.yourroom.service;
+package com.yourroom.user.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;

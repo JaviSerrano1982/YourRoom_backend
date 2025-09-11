@@ -1,9 +1,9 @@
-package com.yourroom.service;
+package com.yourroom.user.service;
 
-import com.yourroom.model.User;
-import com.yourroom.model.UserProfile;
-import com.yourroom.repository.UserProfileRepository;
-import com.yourroom.repository.UserRepository;
+import com.yourroom.user.model.User;
+import com.yourroom.user.model.UserProfile;
+import com.yourroom.user.repository.UserProfileRepository;
+import com.yourroom.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -59,15 +59,12 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         // ---------------------------------------------------------------------
-        // 1) EXCEPCIÓN DE RUTA (/api/profile)
+        // 1) EXCEPCIONES DE RUTA (ELIMINADAS)
         // ---------------------------------------------------------------------
-        // Se permite el acceso a rutas que empiezan por /api/profile sin validar JWT.
-        // Revisión futura: limitar la excepción a endpoints/verbos concretos si procede.
-        String path = request.getRequestURI();
-        if (path.startsWith("/api/profile")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        // Ya no se hace bypass para /api/profile. Todas las rutas pasan por el
+        // filtro y, si llevan Bearer válido, se autentican. Las rutas públicas
+        // deben declararse en SecurityFilterChain (permitAll) y no aquí.
+        // String path = request.getRequestURI();
 
         // ---------------------------------------------------------------------
         // 2) EXTRACCIÓN DEL TOKEN (Authorization: "Bearer <token>")
@@ -76,10 +73,14 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
-            username = jwtUtil.getUsernameFromToken(jwt);
+        // Si no hay Bearer, no autenticamos aquí y dejamos continuar la cadena.
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        jwt = authHeader.substring(7);
+        username = jwtUtil.getUsernameFromToken(jwt);
 
         // ---------------------------------------------------------------------
         // 3) CARGA DE USUARIO + 4) VALIDACIÓN DEL TOKEN
@@ -108,4 +109,5 @@ public class JwtFilter extends OncePerRequestFilter {
         // en lugar de hacer excepciones locales aquí.
         filterChain.doFilter(request, response);
     }
+
 }

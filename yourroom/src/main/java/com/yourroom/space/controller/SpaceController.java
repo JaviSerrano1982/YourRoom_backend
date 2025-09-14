@@ -6,6 +6,8 @@ import com.yourroom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -86,6 +88,16 @@ public class SpaceController {
 
         return ResponseEntity.ok(service.getAllForOwner(principal.getUsername()));
     }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteSpace(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        service.deleteDraft(id, authentication.getName());
+        return ResponseEntity.noContent().build(); // 204
+    }
+
 
 
 }

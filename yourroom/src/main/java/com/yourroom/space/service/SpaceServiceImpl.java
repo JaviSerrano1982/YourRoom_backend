@@ -36,6 +36,33 @@ public class SpaceServiceImpl implements SpaceService {
         r.description = s.getDescription();
         return r;
     }
+    @Override
+    @Transactional
+    public void deleteDraft(Long id, String ownerEmail) {
+        // 1) Cargar el Space
+        Space space = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
+
+        // 2) Obtener el id del usuario autenticado a partir del email
+        Long ownerId = userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
+
+        // 3) Comprobar que el space pertenece al usuario (usa getOwnerId, no getOwner)
+        if (!ownerId.equals(space.getOwnerId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para borrar este espacio");
+        }
+
+        // 4) Solo permitir borrar si está en DRAFT
+        if (space.getStatus() != SpaceStatus.DRAFT) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Solo se pueden eliminar espacios en estado DRAFT");
+        }
+
+        // 5) Borrar
+        repo.delete(space);
+    }
+
+
 
     @Override
     @Transactional

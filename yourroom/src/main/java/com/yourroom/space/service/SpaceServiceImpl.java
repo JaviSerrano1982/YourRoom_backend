@@ -113,22 +113,27 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     @Transactional
-    public SpaceResponse updateDetails(Long id, SpaceDetailsRequest req) {
-        Space s = repo.findById(id)
+    public SpaceResponse updateDetails(Long id, String ownerEmail, SpaceDetailsRequest req) {
+        Space space = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
 
-        if (req.description != null && req.description.trim().length() < 30)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La descripción debe tener al menos 30 caracteres");
-        if (req.sizeM2 != null && req.sizeM2 < 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La superficie no puede ser negativa");
+        Long ownerId = userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
 
-        if (req.sizeM2 != null) s.setSizeM2(req.sizeM2);
-        if (req.availability != null) s.setAvailability(req.availability);
-        if (req.services != null) s.setServices(req.services);
-        if (req.description != null) s.setDescription(req.description.trim());
+        if (!ownerId.equals(space.getOwnerId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No eres el dueño de este espacio");
+        }
 
-        return toResponse(repo.save(s));
+        if (req.sizeM2 != null) space.setSizeM2(req.sizeM2);
+        if (req.availability != null) space.setAvailability(req.availability);
+        if (req.services != null) space.setServices(req.services);
+        if (req.description != null) space.setDescription(req.description);
+
+        repo.save(space);
+        return toResponse(space);
     }
+
 
     @Override
     @Transactional(readOnly = true)

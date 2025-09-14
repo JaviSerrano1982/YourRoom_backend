@@ -11,7 +11,7 @@ import java.util.List;
 public interface SpaceService {
     SpaceResponse create(Long ownerId, SpaceBasicsRequest req);
     SpaceResponse updateBasics(Long id, String ownerEmail, SpaceBasicsRequest req);
-    SpaceResponse updateDetails(Long id, SpaceDetailsRequest req);
+    SpaceResponse updateDetails(Long id, String ownerEmail, SpaceDetailsRequest req);
     SpaceResponse getOneForOwner(Long id, String ownerEmail);
     List<SpaceResponse> getAllForOwner(String ownerEmail);
     void deleteDraft(Long id, String ownerEmail);

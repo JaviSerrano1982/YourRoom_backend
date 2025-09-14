@@ -50,7 +50,7 @@ public class SpaceController {
 
         // Si quieres, aquí puedes validar propietario igual que en GET o en updateBasics.
         // Por simplicidad reutilizamos la misma lógica que tu PUT /{id}/details:
-        return ResponseEntity.ok(service.updateDetails(id, req));
+        return ResponseEntity.ok(service.updateDetails(id, principal.getUsername(), req));
     }
 
 
@@ -70,9 +70,9 @@ public class SpaceController {
             @RequestBody SpaceDetailsRequest req,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
 
-        // (Opcional) podrías validar propietario aquí igual que en updateBasics
-        return ResponseEntity.ok(service.updateDetails(id, req));
+        return ResponseEntity.ok(service.updateDetails(id, principal.getUsername(), req));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<SpaceResponse> getOne(

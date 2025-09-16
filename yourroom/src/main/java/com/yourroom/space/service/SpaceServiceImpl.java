@@ -19,6 +19,7 @@ public class SpaceServiceImpl implements SpaceService {
 
     private final SpaceRepository repo;
     private final UserRepository userRepository;
+    private final PhotoService photoService;
 
     private static SpaceResponse toResponse(Space s) {
         SpaceResponse r = new SpaceResponse();
@@ -60,6 +61,12 @@ public class SpaceServiceImpl implements SpaceService {
 
         // 5) Borrar
         repo.delete(space);
+
+        // Borra fotos relacionadas (Storage + BD)
+        photoService.deleteAllForSpace(id, ownerEmail);
+
+        // Borra el space
+        repo.deleteById(id);
     }
 
 

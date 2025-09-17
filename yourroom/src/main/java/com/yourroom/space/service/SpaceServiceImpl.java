@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -37,40 +38,30 @@ public class SpaceServiceImpl implements SpaceService {
         r.description = s.getDescription();
         return r;
     }
+
+    // ===================== BORRADO (idempotente por owner) =====================
     @Override
     @Transactional
     public void deleteDraft(Long id, String ownerEmail) {
-        // 1) Cargar el Space
-        Space space = repo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
-
-        // 2) Obtener el id del usuario autenticado a partir del email
+        // En esta opción permitimos borrar cualquier status si es del owner (UX sencilla).
         Long ownerId = userRepository.findByEmail(ownerEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
                 .getId();
 
-        // 3) Comprobar que el space pertenece al usuario (usa getOwnerId, no getOwner)
-        if (!ownerId.equals(space.getOwnerId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para borrar este espacio");
-        }
-
-        // 4) Solo permitir borrar si está en DRAFT
-        if (space.getStatus() != SpaceStatus.DRAFT) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Solo se pueden eliminar espacios en estado DRAFT");
-        }
-
-        // 5) Borrar
-        repo.delete(space);
-
-        // Borra fotos relacionadas (Storage + BD)
-        photoService.deleteAllForSpace(id, ownerEmail);
-
-        // Borra el space
-        repo.deleteById(id);
+        repo.findById(id).ifPresent(space -> {
+            if (!ownerId.equals(space.getOwnerId())) {
+                // No es tuyo: no lanzamos excepción para idempotencia (o lanza FORBIDDEN si prefieres)
+                return;
+            }
+            // 1) Borrar fotos asociadas (BD + Storage)
+            photoService.deleteAllForSpace(space.getId(), ownerEmail);
+            // 2) Borrar Space
+            repo.delete(space);
+        });
+        // Si no existe, devolvemos 204 igualmente (idempotente): el Controller responde 204.
     }
 
-
-
+    // ===================== CREATE BASICS =====================
     @Override
     @Transactional
     public SpaceResponse create(Long ownerId, SpaceBasicsRequest req) {
@@ -87,10 +78,10 @@ public class SpaceServiceImpl implements SpaceService {
         s.setAddressLine(req.addressLine);
         s.setCapacity(req.capacity);
         s.setHourlyPrice(req.hourlyPrice);
-
         return toResponse(repo.save(s));
     }
 
+    // ===================== UPDATE BASICS =====================
     @Override
     @Transactional
     public SpaceResponse updateBasics(Long id, String ownerEmail, SpaceBasicsRequest req) {
@@ -114,10 +105,10 @@ public class SpaceServiceImpl implements SpaceService {
         s.setAddressLine(req.addressLine);
         s.setCapacity(req.capacity);
         s.setHourlyPrice(req.hourlyPrice);
-
         return toResponse(repo.save(s));
     }
 
+    // ===================== UPDATE DETAILS =====================
     @Override
     @Transactional
     public SpaceResponse updateDetails(Long id, String ownerEmail, SpaceDetailsRequest req) {
@@ -128,9 +119,8 @@ public class SpaceServiceImpl implements SpaceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
                 .getId();
 
-        if (!ownerId.equals(space.getOwnerId())) {
+        if (!ownerId.equals(space.getOwnerId()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No eres el dueño de este espacio");
-        }
 
         if (req.sizeM2 != null) space.setSizeM2(req.sizeM2);
         if (req.availability != null) space.setAvailability(req.availability);
@@ -141,7 +131,7 @@ public class SpaceServiceImpl implements SpaceService {
         return toResponse(space);
     }
 
-
+    // ===================== GET ONE =====================
     @Override
     @Transactional(readOnly = true)
     public SpaceResponse getOneForOwner(Long id, String ownerEmail) {
@@ -158,6 +148,7 @@ public class SpaceServiceImpl implements SpaceService {
         return toResponse(s);
     }
 
+    // ===================== GET ALL =====================
     @Override
     @Transactional(readOnly = true)
     public List<SpaceResponse> getAllForOwner(String ownerEmail) {
@@ -165,7 +156,28 @@ public class SpaceServiceImpl implements SpaceService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
                 .getId();
 
-        return repo.findAllByOwnerIdOrderByIdDesc(ownerId)
+
+        return repo.findAllByOwnerId(ownerId)
                 .stream().map(SpaceServiceImpl::toResponse).toList();
+    }
+
+    // ===================== CREATE DRAFT =====================
+    @Override
+    @Transactional
+    public SpaceResponse createDraft(String ownerEmail) {
+        Long ownerId = userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
+
+        Space s = new Space();
+        s.setOwnerId(ownerId);
+        s.setStatus(SpaceStatus.DRAFT);
+
+        // Si tu esquema aún exige NOT NULL, deja defaults. Si ya hiciste nullable, puedes quitarlos.
+        s.setTitle("");
+        s.setHourlyPrice(BigDecimal.ZERO);
+
+        Space saved = repo.save(s);
+        return toResponse(saved);
     }
 }

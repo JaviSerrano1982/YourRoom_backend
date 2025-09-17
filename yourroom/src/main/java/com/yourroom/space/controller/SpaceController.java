@@ -98,6 +98,14 @@ public class SpaceController {
         return ResponseEntity.noContent().build(); // 204
     }
 
+    @PostMapping("/draft")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SpaceResponse> createDraft(Authentication auth) {
+        System.out.println("➡ Usuario autenticado: " + auth.getName());//PRUEBAS
+        return ResponseEntity.ok(service.createDraft(auth.getName()));
+    }
+
+
 
 
 }

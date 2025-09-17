@@ -18,13 +18,13 @@ public class Space {
     private SpaceStatus status = SpaceStatus.DRAFT;
 
     // BASICS
-    @Column(nullable = false)
+    @Column
     private String title;
     private String location;
     private String addressLine;
     private Integer capacity;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column( precision = 10, scale = 2)
     private BigDecimal hourlyPrice;
 
     // DETALLES

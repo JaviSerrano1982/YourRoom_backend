@@ -3,43 +3,64 @@ package com.yourroom.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import org.springframework.context.annotation.Configuration;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Logger;
 
-// -------------------------------------------------------------
-// FIREBASE ADMIN: INICIALIZACIÓN DEL SDK
-// -------------------------------------------------------------
-
-/**
- * Clase de configuración que inicializa el **Firebase Admin SDK** al arrancar la aplicación.
- *
- * * ¿Qué hace?
- *   - Crea una instancia única de `FirebaseApp` si aún no existe.
- *   - Usa las credenciales por defecto de Google (`GoogleCredentials.getApplicationDefault()`).
- *
- * * ¿Cuándo corre?
- *   - En el arranque del contexto de Spring, gracias a `@PostConstruct`.
- *
- * * Requisitos de credenciales:
- *   - Local/Servidor: variable de entorno `GOOGLE_APPLICATION_CREDENTIALS` apuntando al JSON del service account
- *   ubicado en la carpeta secrets ( añadida al gitignore).
- *   - Alternativa: credenciales provistas por el entorno (p. ej., GCP).
- *
- * * Notas:
- *   - La condición `FirebaseApp.getApps().isEmpty()` evita inicializaciones duplicadas.
- *
- */
 @Configuration
 public class FirebaseAdminConfig {
 
+    private static final Logger log = Logger.getLogger(FirebaseAdminConfig.class.getName());
+
+    @Value("${firebase.storage.bucket}")
+    private String bucketName;
+
+    // Puede ser:
+    //  - classpath:secrets/your-room-4277c-firebase-adminsdk-fbsvc-44e5fe9acc.json
+    //  - file:/ruta/absoluta/your-room-4277c-firebase-adminsdk-fbsvc-44e5fe9acc.json
+    // Si lo dejas vacío, usará Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS).
+    @Value("${firebase.credentials:}")
+    private String credentialsLocation;
+
     @PostConstruct
     public void init() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.getApplicationDefault())
-                    .build();
-            FirebaseApp.initializeApp(options);
+        if (!FirebaseApp.getApps().isEmpty()) return;
+
+        GoogleCredentials creds;
+        if (credentialsLocation != null && !credentialsLocation.isBlank()) {
+            log.info(() -> "[Firebase] Cargando credenciales desde: " + credentialsLocation);
+            if (credentialsLocation.startsWith("classpath:")) {
+                String path = credentialsLocation.substring("classpath:".length());
+                Resource res = new ClassPathResource(path);
+                try (InputStream is = res.getInputStream()) {
+                    creds = GoogleCredentials.fromStream(is);
+                }
+            } else if (credentialsLocation.startsWith("file:")) {
+                String path = credentialsLocation.substring("file:".length());
+                try (InputStream is = new FileInputStream(path)) {
+                    creds = GoogleCredentials.fromStream(is);
+                }
+            } else {
+                throw new IllegalArgumentException("firebase.credentials debe empezar por classpath: o file:");
+            }
+        } else {
+            log.info("[Firebase] Usando Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS).");
+            creds = GoogleCredentials.getApplicationDefault();
         }
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(creds)
+                .setStorageBucket(bucketName)
+                .build();
+
+        FirebaseApp.initializeApp(options);
+        log.info("[Firebase] Inicializado con bucket=" + bucketName);
     }
 }

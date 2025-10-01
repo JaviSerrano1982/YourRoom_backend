@@ -1,4 +1,4 @@
-# 💪 YourRoom – Backend con Spring Boot
+#  YourRoom – Backend con Spring Boot
 
 Este es el backend de **YourRoom**, una aplicación pensada para entrenadores personales que desean reservar salas por horas en gimnasios u hoteles.  
 El backend está desarrollado con **Spring Boot**, usa **JWT para autenticación** y se conecta a **Firebase Storage** para el almacenamiento de imágenes de perfil.  
@@ -6,18 +6,18 @@ Los datos de usuario y autenticación se guardan en una base de datos **MySQL**.
 
 ---
 
-## 📦 Tecnologías utilizadas
+##  Tecnologías utilizadas
 
-- 🧠 Java 17
-- ⚙️ Spring Boot
-- 🔐 JWT (JSON Web Token)
-- 🗂️ Firebase Storage
-- 🐬 MySQL
-- 🧰 Maven
+- Java 17
+- Spring Boot
+- JWT (JSON Web Token)
+- Firebase Storage
+- MySQL
+- Maven
 
 ---
 
-## 🚀 Funcionalidades principales
+##  Funcionalidades principales
 
 - Registro e inicio de sesión de usuarios con JWT
 - Validación de credenciales desde el backend
@@ -27,7 +27,7 @@ Los datos de usuario y autenticación se guardan en una base de datos **MySQL**.
 
 ---
 
-## ✅ Requisitos previos
+##  Requisitos previos
 
 Antes de ejecutar el proyecto, asegúrate de tener:
 
@@ -99,7 +99,7 @@ spring.datasource.password=123456
 
 ---
 
-## 👨‍🏫 Para profesores o revisores
+##  Para profesores o revisores
 
 Este proyecto está preparado para ser ejecutado en local con facilidad.  
 Solo necesitas:

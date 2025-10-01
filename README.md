@@ -123,4 +123,4 @@ Uso académico. Todos los derechos reservados por el autor.
 
 **Javier Serrano**  
 Desarrollador de apps multiplataforma  
-[GitHub](https://github.com/tu-usuario) | [LinkedIn](https://linkedin.com/in/tu-perfil)
+[GitHub](https://github.com/tu-usuario) | [LinkedIn](https://linkedin.com/in/javier-serrano-jiménez-aaba69117)

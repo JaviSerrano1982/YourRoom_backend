@@ -1,7 +1,7 @@
 #  YourRoom – Backend con Spring Boot
 
-Este es el backend de **YourRoom**, una aplicación pensada para entrenadores personales y usuarios que desean reservar cualquier tipo de sala, local, habitación o 
-gimnasio privado para realizar actividades saludables y relacionadas con el cuidado y el  bienestar de las personas.
+Este es el backend de **YourRoom**, una aplicación pensada para entrenadores personales y usuarios que desean reservar cualquier tipo de sala, gimnasio, local o habitación 
+ para realizar actividades saludables y relacionadas con el cuidado y el  bienestar de las personas.
 
 El backend está desarrollado con Spring Boot y utiliza Spring Security con JWT para la autenticación y autorización de usuarios, además de BCrypt para el hash
 de contraseñas. y se conecta a **Firebase Storage** para el almacenamiento de imágenes de perfil.  

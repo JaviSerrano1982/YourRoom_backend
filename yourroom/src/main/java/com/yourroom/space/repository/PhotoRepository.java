@@ -8,4 +8,5 @@ import java.util.List;
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<Photo> findBySpace_IdOrderByIdAsc(Long spaceId);
     void deleteBySpace_Id(Long spaceId);
+    long countBySpace_Id(Long spaceId);
 }

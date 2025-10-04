@@ -3,6 +3,7 @@ package com.yourroom.space.service;
 import com.yourroom.space.dto.*;
 import com.yourroom.space.model.Space;
 import com.yourroom.space.model.SpaceStatus;
+import com.yourroom.space.repository.PhotoRepository;
 import com.yourroom.space.repository.SpaceRepository;
 import com.yourroom.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class SpaceServiceImpl implements SpaceService {
     private final SpaceRepository repo;
     private final UserRepository userRepository;
     private final PhotoService photoService;
+    private final PhotoRepository photoRepo;
 
     private static SpaceResponse toResponse(Space s) {
         SpaceResponse r = new SpaceResponse();
@@ -59,6 +61,30 @@ public class SpaceServiceImpl implements SpaceService {
             repo.delete(space);
         });
         // Si no existe, devolvemos 204 igualmente (idempotente): el Controller responde 204.
+    }
+    @Override
+    @Transactional
+    public SpaceResponse publish(Long id, String ownerEmail) {
+        Long ownerId = userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
+
+        Space s = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
+
+        if (!s.getOwnerId().equals(ownerId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes publicar un space de otro usuario");
+
+        // Validaciones mínimas (ajusta a tus reglas reales)
+        if (s.getTitle() == null || s.getTitle().trim().isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falta el título");
+        if (s.getHourlyPrice() == null || s.getHourlyPrice().signum() < 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Precio por hora inválido");
+        if (photoRepo.countBySpace_Id(id) == 0)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debes subir al menos una foto");
+
+        s.setStatus(SpaceStatus.PUBLISHED);
+        return toResponse(repo.save(s));
     }
 
     // ===================== CREATE BASICS =====================

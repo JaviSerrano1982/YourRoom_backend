@@ -16,5 +16,6 @@ public interface SpaceService {
     List<SpaceResponse> getAllForOwner(String ownerEmail);
     void deleteDraft(Long id, String ownerEmail);
     SpaceResponse createDraft(String ownerEmail);
+    SpaceResponse publish(Long id, String ownerEmail);
 
 }

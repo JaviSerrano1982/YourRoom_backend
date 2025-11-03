@@ -43,7 +43,7 @@ Antes de ejecutar el proyecto, asegúrate de tener:
 1. **Clona este repositorio:**
 
 ```bash
-git clone https://github.com/tu-usuario/yourroom-backend.git
+git clone https://github.com/JaviSerrano1982/YourRoom_backend.git
 cd yourroom-backend
 ```
 

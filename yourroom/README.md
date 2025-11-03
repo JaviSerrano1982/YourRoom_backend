@@ -8,12 +8,12 @@ Los datos de usuario y autenticación se guardan en una base de datos **MySQL**.
 
 ## 📦 Tecnologías utilizadas
 
-- 🧠 Java 17
-- ⚙️ Spring Boot
-- 🔐 JWT (JSON Web Token)
-- 🗂️ Firebase Storage
-- 🐬 MySQL
-- 🧰 Maven
+- Java 17
+- Spring Boot
+- JWT (JSON Web Token)
+- Firebase Storage
+- MySQL
+- Maven
 
 ---
 

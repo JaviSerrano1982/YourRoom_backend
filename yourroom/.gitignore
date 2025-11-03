@@ -37,3 +37,37 @@ src/main/resources/application.properties
 
 /src/main/resources/secrets/
 *.json
+
+# No subir configuraciones con credenciales reales
+
+src/main/resources/application.yml
+src/main/resources/secrets/
+src/main/resources/firebase/
+firebase-admin.json
+serviceAccountKey.json
+
+
+# Logs y dumps
+
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+*.db
+*.sql
+*.sqlite
+*.zip
+
+
+# Archivos de entorno y secretos
+
+.env
+.env.*
+*.env
+*.key
+*.pem
+*.crt
+*.keystore
+*.jks

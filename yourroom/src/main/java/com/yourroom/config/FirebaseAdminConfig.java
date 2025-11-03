@@ -22,10 +22,7 @@ public class FirebaseAdminConfig {
     @Value("${firebase.storage.bucket}")
     private String bucketName;
 
-    // Puede ser:
-    //  - classpath:secrets/your-room-4277c-firebase-adminsdk-fbsvc-44e5fe9acc.json
-    //  - file:/ruta/absoluta/your-room-4277c-firebase-adminsdk-fbsvc-44e5fe9acc.json
-    // Si lo dejas vacío, usará Application Default Credentials (GOOGLE_APPLICATION_CREDENTIALS).
+
     @Value("${firebase.credentials:}")
     private String credentialsLocation;
 

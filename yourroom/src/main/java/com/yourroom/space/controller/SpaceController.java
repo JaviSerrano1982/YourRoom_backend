@@ -104,6 +104,12 @@ public class SpaceController {
         System.out.println("➡ Usuario autenticado: " + auth.getName());//PRUEBAS
         return ResponseEntity.ok(service.createDraft(auth.getName()));
     }
+    @PatchMapping("/{id}/publish")
+    public ResponseEntity<SpaceResponse> publish(
+            @PathVariable Long id,
+            @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
+        return ResponseEntity.ok(service.publish(id, principal.getUsername()));
+    }
 
 
 

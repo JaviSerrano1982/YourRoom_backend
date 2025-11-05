@@ -22,7 +22,7 @@ Los datos de usuario y autenticación se guardan en una base de datos **MySQL**.
 - Registro e inicio de sesión de usuarios con JWT
 - Validación de credenciales desde el backend
 - Gestión y edición de perfil de usuario
-- Subida de imágenes de perfil a Firebase Storage
+- Subida de todas las imágenes de a Firebase Storage
 - API REST conectada a base de datos MySQL
 
 ---
@@ -34,7 +34,7 @@ Antes de ejecutar el proyecto, asegúrate de tener:
 - Java 17 o superior
 - Maven instalado
 - MySQL funcionando en tu máquina (por defecto usa `localhost:3307`)
-- Archivo de credenciales Firebase (`your-room-4277c-firebase-adminsdk-xxxx.json`) proporcionado por el autor
+- Archivo de credenciales de tu storage de Firebase (`Ejemplo: your-room-xxxxx-firebase-adminsdk-xxxx.json`).
 
 ---
 
@@ -47,7 +47,7 @@ git clone https://github.com/JaviSerrano1982/YourRoom_backend.git
 cd yourroom-backend
 ```
 
-2. **Crea una carpeta llamada `secrets/` en la raíz del proyecto** y añade dentro el archivo `.json` con las credenciales de Firebase Storage (que te será proporcionado por el autor del proyecto).
+2. **Crea una carpeta llamada `secrets/` en la raíz del proyecto** y añade dentro el archivo `.json` con las credenciales de Firebase Storage.
 
 3. **Define la variable de entorno con la ruta a las credenciales:**
 

@@ -15,4 +15,5 @@ public class SpaceResponse {
     public String availability;
     public String services;
     public String description;
+    public String primaryPhotoUrl;
 }

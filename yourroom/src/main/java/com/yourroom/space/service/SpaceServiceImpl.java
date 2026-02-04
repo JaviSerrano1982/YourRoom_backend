@@ -206,4 +206,22 @@ public class SpaceServiceImpl implements SpaceService {
         Space saved = repo.save(s);
         return toResponse(saved);
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SpaceResponse> searchPublished(String q) {
+        var spaces = repo.searchByTextAndStatus(q, SpaceStatus.PUBLISHED);
+
+        return spaces.stream().map(s -> {
+            SpaceResponse r = toResponse(s);
+
+            // foto principal si existe; si no, primera foto; si no hay fotos, null
+            String url = photoRepo.findFirstBySpace_IdAndPrimaryPhotoTrueOrderByIdAsc(s.getId())
+                    .map(p -> p.getUrl())
+                    .orElseGet(() -> photoRepo.findBySpace_IdOrderByIdAsc(s.getId())
+                            .stream().findFirst().map(p -> p.getUrl()).orElse(null));
+
+            r.primaryPhotoUrl = url;
+            return r;
+        }).toList();
+    }
 }

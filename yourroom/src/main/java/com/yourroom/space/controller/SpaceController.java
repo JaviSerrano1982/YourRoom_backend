@@ -110,6 +110,11 @@ public class SpaceController {
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
         return ResponseEntity.ok(service.publish(id, principal.getUsername()));
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<SpaceResponse>> search(@RequestParam(required = false, defaultValue = "") String q) {
+        return ResponseEntity.ok(service.searchPublished(q));
+    }
+
 
 
 

@@ -30,4 +30,6 @@ public interface SpaceRepository extends JpaRepository<Space, Long> {
         ORDER BY s.updatedAt DESC
     """)
     List<Space> searchByTextAndStatus(@Param("q") String q, @Param("status") SpaceStatus status);
+    List<Space> findByIdIn(List<Long> ids);
+
 }

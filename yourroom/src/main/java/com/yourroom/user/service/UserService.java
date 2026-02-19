@@ -37,4 +37,5 @@ public interface UserService {
     // OBTENER TODOS LOS USUARIOS
     // -------------------------------------------------------------------------
     List<User> getAllUsers();
+
 }

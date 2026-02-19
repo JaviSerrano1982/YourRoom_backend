@@ -224,4 +224,31 @@ public class SpaceServiceImpl implements SpaceService {
             return r;
         }).toList();
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<SpaceResponse> getPublishedByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return List.of();
+
+        // 1) Traemos spaces por ids
+        var spaces = repo.findByIdIn(ids);
+
+        // 2) Filtramos publicados (para evitar devolver DRAFT/privados)
+        var published = spaces.stream()
+                .filter(s -> s.getStatus() == SpaceStatus.PUBLISHED)
+                .toList();
+
+        // 3) Mapeamos a SpaceResponse + primaryPhotoUrl (igual que searchPublished)
+        return published.stream().map(s -> {
+            SpaceResponse r = toResponse(s);
+
+            String url = photoRepo.findFirstBySpace_IdAndPrimaryPhotoTrueOrderByIdAsc(s.getId())
+                    .map(p -> p.getUrl())
+                    .orElseGet(() -> photoRepo.findBySpace_IdOrderByIdAsc(s.getId())
+                            .stream().findFirst().map(p -> p.getUrl()).orElse(null));
+
+            r.primaryPhotoUrl = url;
+            return r;
+        }).toList();
+    }
+
 }

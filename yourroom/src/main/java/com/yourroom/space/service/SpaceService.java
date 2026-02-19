@@ -18,4 +18,6 @@ public interface SpaceService {
     SpaceResponse createDraft(String ownerEmail);
     SpaceResponse publish(Long id, String ownerEmail);
     List<SpaceResponse> searchPublished(String q);
+    List<SpaceResponse> getPublishedByIds(List<Long> ids);
+
 }

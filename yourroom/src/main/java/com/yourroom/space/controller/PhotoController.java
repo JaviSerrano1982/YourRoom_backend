@@ -32,7 +32,7 @@ public class PhotoController {
     public ResponseEntity<List<PhotoResponse>> list(
             @PathVariable Long spaceId,
             Authentication auth) {
-        return ResponseEntity.ok(photoService.list(spaceId, auth.getName()));
+        return ResponseEntity.ok(photoService.getBySpaceVisibleToUser(spaceId, auth.getName()));
     }
 
     @DeleteMapping("/{spaceId}/photos")

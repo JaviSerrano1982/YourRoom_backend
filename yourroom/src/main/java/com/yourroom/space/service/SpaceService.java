@@ -13,11 +13,13 @@ public interface SpaceService {
     SpaceResponse updateBasics(Long id, String ownerEmail, SpaceBasicsRequest req);
     SpaceResponse updateDetails(Long id, String ownerEmail, SpaceDetailsRequest req);
     SpaceResponse getOneForOwner(Long id, String ownerEmail);
+    SpaceResponse getOneVisibleToUser(Long id, String requesterEmail);
     List<SpaceResponse> getAllForOwner(String ownerEmail);
     void deleteDraft(Long id, String ownerEmail);
     SpaceResponse createDraft(String ownerEmail);
     SpaceResponse publish(Long id, String ownerEmail);
     List<SpaceResponse> searchPublished(String q);
     List<SpaceResponse> getPublishedByIds(List<Long> ids);
+
 
 }

@@ -64,9 +64,9 @@ set GOOGLE_APPLICATION_CREDENTIALS=.\secrets\your-room-4277c-firebase-adminsdk-x
 4. **Verifica la configuración de MySQL** en `src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3307/yourroom_db
-spring.datasource.username=root
-spring.datasource.password=123456
+spring.datasource.url=jdbc:mysql://localhost:****/******_db
+spring.datasource.username=****
+spring.datasource.password=*****
 ```
 
 ⚠️ Cambia los datos según tu configuración local de MySQL.

@@ -4,6 +4,7 @@ import com.yourroom.space.dto.PhotoRequest;
 import com.yourroom.space.dto.PhotoResponse;
 import com.yourroom.space.model.Photo;
 import com.yourroom.space.model.Space;
+import com.yourroom.space.model.SpaceStatus;
 import com.yourroom.space.repository.PhotoRepository;
 import com.yourroom.space.repository.SpaceRepository;
 import com.yourroom.storage.dto.FirebaseStorageService;
@@ -81,6 +82,29 @@ public class PhotoServiceImpl implements PhotoService {
             return r;
         }).toList();
     }
+    @Override
+    @Transactional(readOnly = true)
+    public List<PhotoResponse> getBySpaceVisibleToUser(Long spaceId, String requesterEmail) {
+
+        Long requesterId = userRepo.findByEmail(requesterEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
+
+        Space space = spaceRepo.findById(spaceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
+
+        boolean isOwner = space.getOwnerId().equals(requesterId);
+        boolean isPublished = space.getStatus() == SpaceStatus.PUBLISHED;
+
+        if (!isOwner && !isPublished) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes ver las fotos de este space");
+        }
+
+        return photoRepo.findBySpace_IdOrderByIdAsc(spaceId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     @Override
     @Transactional
@@ -109,4 +133,15 @@ public class PhotoServiceImpl implements PhotoService {
         storageService.deleteByUrl(p.getUrl());
         photoRepo.deleteById(photoId);
     }
+    private PhotoResponse toResponse(Photo photo) {
+        PhotoResponse response = new PhotoResponse();
+
+        response.id = photo.getId();
+        response.spaceId = photo.getSpace().getId();
+        response.url = photo.getUrl();
+        response.primary = photo.isPrimaryPhoto();
+
+        return response;
+    }
+
 }

@@ -79,7 +79,7 @@ public class SpaceController {
             @PathVariable Long id,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
 
-        return ResponseEntity.ok(service.getOneForOwner(id, principal.getUsername()));
+        return ResponseEntity.ok(service.getOneVisibleToUser(id, principal.getUsername()));
     }
 
     @GetMapping("/me")

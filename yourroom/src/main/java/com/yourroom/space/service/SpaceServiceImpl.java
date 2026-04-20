@@ -174,6 +174,26 @@ public class SpaceServiceImpl implements SpaceService {
         return toResponse(s);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public SpaceResponse getOneVisibleToUser(Long id, String requesterEmail) {
+        Long requesterId = userRepository.findByEmail(requesterEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"))
+                .getId();
+
+        Space s = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Space no encontrado"));
+
+        boolean isOwner = s.getOwnerId().equals(requesterId);
+        boolean isPublished = s.getStatus() == SpaceStatus.PUBLISHED;
+
+        if (!isOwner && !isPublished) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes ver este space");
+        }
+
+        return toResponse(s);
+    }
+
     // ===================== GET ALL =====================
     @Override
     @Transactional(readOnly = true)

@@ -10,4 +10,5 @@ public interface PhotoService {
     List<PhotoResponse> list(Long spaceId, String ownerEmail);
     void deleteAllForSpace(Long spaceId, String ownerEmail);
     void deleteOne(Long photoId, String ownerEmail);
+    List<PhotoResponse> getBySpaceVisibleToUser(Long spaceId, String requesterEmail);
 }
